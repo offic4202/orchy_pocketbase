@@ -1,23 +1,6 @@
 version: '3.8'
 
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: orchies-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - ./pb_data:/pb_data:ro
-    depends_on:
-      - frontend
-      - pocketbase
-    networks:
-      - orchies-network
-
   pocketbase:
     image: ghcr.io/pocketbase/pocketbase:latest
     container_name: orchies-pocketbase

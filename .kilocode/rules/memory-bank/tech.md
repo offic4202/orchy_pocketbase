@@ -182,7 +182,7 @@ bun run pb:init    # Initialize PocketBase collections
 
 | Script | Purpose |
 |--------|---------|
-| `deploy.sh` | Full server installation (clones repo, configures env, sets up Nginx, starts services, initializes PocketBase) |
+| `deploy.sh` | Full server installation (Docker, Docker Compose, clone, config, start services, init PocketBase) |
 | `uninstall.sh` | Removes all containers, volumes, images, and project data |
 
 #### Usage
@@ -197,18 +197,21 @@ bun run pb:init    # Initialize PocketBase collections
 
 #### Production Stack
 
-- **docker-compose.prod.yml** — Production deployment with Nginx reverse proxy
-- **nginx/conf.d/orchies.click.conf** — Nginx config supporting subdomain and subdirectory modes
+- **docker-compose.prod.yml** — PocketBase + Next.js frontend (no Nginx — relies on NPM for proxy/SSL)
+- **nginx/conf.d/orchies.click.conf** — Standalone Nginx config (optional, if not using NPM)
 - **next.config.ts** — Supports `basePath` for subdirectory deployments via `BASE_PATH` env var
 
-#### Nginx Routing
+#### Nginx Proxy Manager (NPM) Setup
 
-| Path | Target | Purpose |
-|------|--------|---------|
-| `/` or `/{basePath}` | Frontend (Next.js) | Main website |
-| `/pb/` or `/{basePath}/pb/` | PocketBase admin | Admin dashboard |
-| `/api/` or `/{basePath}/api/` | Next.js API routes | Form submissions |
+The deploy script prints NPM proxy host configuration instructions after deployment. Two proxy hosts are needed:
 
-#### Nginx Proxy Manager
+| Proxy Host | Forward To | Path |
+|-----------|-----------|------|
+| `orchies.click` | `http://127.0.0.1:3000` | `/` (or `/{basePath}` for subdirectory) |
+| `orchies.click` | `http://127.0.0.1:8090` | `/pb/` (or `/{basePath}/pb/` for subdirectory) |
 
-The setup is compatible with Nginx Proxy Manager for SSL termination and advanced proxy management.
+Enable SSL for both proxy hosts in NPM after creation.
+
+#### Docker Auto-Installation
+
+`deploy.sh` automatically installs Docker and Docker Compose if they are missing on the server.

@@ -4,6 +4,28 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
+│              Nginx Proxy Manager (NPM)                           │
+│              (orchies.click / orchies/)                          │
+├──────────────────────────┬──────────────────────────────────────┤
+│                          │                                        │
+│   Portfolio Website      │        PocketBase Backend           │
+│   (Next.js 16)          │        (Docker)                      │
+│                          │                                        │
+│   Vite/Tailwind          │   ┌─────────────────────────┐      │
+│   App Router             │   │   12 Collections          │      │
+│                          │   │   Users, Portfolio,       │      │
+│   Server Components      │   │   Services, Products,     │      │
+│   + Client Islands       │   │   Rentals, Blog, etc.     │      │
+│                          │   └─────────────────────────┘      │
+│   PocketBase JS SDK      │   ┌─────────────────────────┐      │
+│   for API calls          │   │   SQLite + File Storage   │      │
+│                          │   │   Admin Dashboard         │      │
+│   basePath support       │   │   /_/                     │      │
+│   for subdirectory       │   └─────────────────────────┘      │
+│   deployments            │                                        │
+└──────────────────────────┴──────────────────────────────────────┘
+```
+┌─────────────────────────────────────────────────────────────────┐
 │                        Nginx Reverse Proxy                       │
 │                     (orchies.click / orchies/ )                  │
 ├──────────────────────────┬──────────────────────────────────────┤

@@ -30,11 +30,10 @@ A complete remake of orchies.click as a headless CMS portfolio site for a videog
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
 | `docker-compose.yml` | Development PocketBase + Frontend | ✅ Ready |
-| `docker-compose.prod.yml` | Production PocketBase + Frontend + Nginx | ✅ Ready |
-| `Dockerfile` | Multi-stage production build for Next.js | ✅ Ready |
-| `deploy.sh` | Full server installation script | ✅ Ready |
+| `docker-compose.prod.yml` | Production PocketBase + Frontend (no Nginx — uses NPM) | ✅ Ready |
+| `deploy.sh` | Full server install (Docker, Docker Compose, clone, config, start) | ✅ Ready |
 | `uninstall.sh` | Complete removal script | ✅ Ready |
-| `nginx/conf.d/orchies.click.conf` | Nginx config for subdomain/subdirectory | ✅ Ready |
+| `nginx/conf.d/orchies.click.conf` | Standalone Nginx config (optional, if not using NPM) | ✅ Ready |
 | `pb/init.mjs` | PocketBase schema + sample data init | ✅ Ready |
 | `src/app/page.tsx` | Homepage with all sections | ✅ Ready |
 | `src/app/layout.tsx` | Root layout with PocketBase settings | ✅ Ready |
@@ -92,4 +91,4 @@ bun dev
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-07-28 | Complete remake of orchies.click with PocketBase headless CMS architecture, Next.js 16 frontend, Docker Compose deployment, 12 PocketBase collections, 8 pages, contact/rental forms |
-| 2026-07-28 | Added production deployment: docker-compose.prod.yml with Nginx reverse proxy, deploy.sh installation script, uninstall.sh removal script, nginx config for subdomain/subdirectory, next.config.ts basePath support |
+| 2026-07-28 | Added production deployment: docker-compose.prod.yml (NPM-compatible, no Nginx container), deploy.sh with Docker auto-install, uninstall.sh, nginx config for standalone use, next.config.ts basePath support |

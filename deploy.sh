@@ -32,14 +32,14 @@ prerequisites() {
   local missing=0
 
   if ! command -v docker &>/dev/null; then
-    echo "  ✗ Docker is not installed"
+    echo "  ✗ Docker is not installed — will install now"
     missing=1
   else
     echo "  ✓ Docker found: $(docker --version)"
   fi
 
   if ! command -v docker compose &>/dev/null; then
-    echo "  ✗ Docker Compose is not installed"
+    echo "  ✗ Docker Compose is not installed — will install now"
     missing=1
   else
     echo "  ✓ Docker Compose found"
@@ -54,9 +54,37 @@ prerequisites() {
 
   if [ "$missing" -eq 1 ]; then
     echo ""
-    echo "Please install the missing prerequisites and try again."
-    exit 1
+    echo "Installing missing prerequisites..."
+    install_docker
   fi
+}
+
+install_docker() {
+  echo "Installing Docker and Docker Compose..."
+
+  if ! command -v docker &>/dev/null; then
+    echo "  Installing Docker..."
+    apt-get update -qq
+    apt-get install -y -qq ca-certificates curl gnupg
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
+    apt-get update -qq
+    apt-get install -y -qq docker-ce docker-ce-cli containerd.io
+    echo "  ✓ Docker installed"
+  fi
+
+  if ! command -v docker compose &>/dev/null; then
+    echo "  Installing Docker Compose plugin..."
+    apt-get install -y -qq docker-compose-plugin
+    echo "  ✓ Docker Compose installed"
+  fi
+
+  echo ""
+  echo "  Docker installation complete. You may need to log out and back in"
+  echo "  for Docker group membership to take effect."
+  echo "  Verify with: docker --version && docker compose version"
 }
 
 clone_repo() {
@@ -103,6 +131,75 @@ configure_next_config() {
     sed -i "s|__DOMAIN__|${DOMAIN}|g" next.config.ts
     echo "  ✓ basePath set to (empty) in next.config.ts"
   fi
+}
+
+start_services() {
+  echo ""
+  echo "Starting services..."
+  docker compose -f docker-compose.prod.yml up -d --build
+  echo "  ✓ Services started"
+}
+
+print_npm_instructions() {
+  echo ""
+  echo "============================================"
+  echo "  Nginx Proxy Manager (NPM) Setup"
+  echo "============================================"
+  echo ""
+  echo "Add these proxy hosts in your NPM dashboard:"
+  echo ""
+  if [ "${DEPLOY_TYPE}" = "subdirectory" ]; then
+    echo "  Proxy Host: ${DOMAIN}"
+    echo "  Forward to: http://127.0.0.1:3000"
+    echo "  Path: ${BASE_PATH}/"
+    echo ""
+    echo "  Proxy Host: ${DOMAIN}"
+    echo "  Forward to: http://127.0.0.1:8090"
+    echo "  Path: ${BASE_PATH}/pb/"
+  else
+    echo "  Proxy Host: ${DOMAIN}"
+    echo "  Forward to: http://127.0.0.1:3000"
+    echo "  Path: /"
+    echo ""
+    echo "  Proxy Host: ${DOMAIN}"
+    echo "  Forward to: http://127.0.0.1:8090"
+    echo "  Path: /pb/"
+  fi
+  echo ""
+  echo "Enable SSL for both proxy hosts in NPM."
+  echo ""
+}
+
+print_summary() {
+  echo ""
+  echo "============================================"
+  echo "  Deployment Complete!"
+  echo "============================================"
+  echo ""
+  echo "Website : https://${DOMAIN}${BASE_PATH}"
+  echo "Admin   : https://${DOMAIN}/pb/_/"
+  echo ""
+  echo "PocketBase Credentials:"
+  echo "  Email    : admin@${DOMAIN}"
+  echo "  Password : (see .env file)"
+  echo ""
+  echo "Commands:"
+  echo "  View logs   : docker compose -f docker-compose.prod.yml logs -f"
+  echo "  Stop        : docker compose -f docker-compose.prod.yml down"
+  echo "  Uninstall   : ${SCRIPT_DIR}/uninstall.sh"
+  echo ""
+}
+
+main() {
+  prerequisites
+  clone_repo
+  configure_env
+  configure_next_config
+  start_services
+  wait_for_pocketbase
+  init_pocketbase
+  print_npm_instructions
+  print_summary
 }
 
 setup_nginx() {
