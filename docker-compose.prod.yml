@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: orchies-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./pb_data:/pb_data:ro
+    depends_on:
+      - frontend
+      - pocketbase
+    networks:
+      - orchies-network
+
+  pocketbase:
+    image: ghcr.io/pocketbase/pocketbase:latest
+    container_name: orchies-pocketbase
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:8090"
+    volumes:
+      - ./pb_data:/pb_data
+      - ./pb/pb_migrations:/pb/pb_migrations
+    environment:
+      - POCKETBASE_ADMIN_EMAIL=admin@orchies.click
+      - POCKETBASE_ADMIN_PASSWORD=admin123
+    command:
+      - serve
+      - http://0.0.0.0:8090
+      - --dir=/pb_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orchies-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orchies-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - NEXT_PUBLIC_POCKETBASE_URL=http://pocketbase:8090
+      - NODE_ENV=production
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    networks:
+      - orchies-network
+
+networks:
+  orchies-network:
+    driver: bridge

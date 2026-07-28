@@ -3,6 +3,31 @@
 ## Architecture Overview
 
 ```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Nginx Reverse Proxy                       │
+│                     (orchies.click / orchies/ )                  │
+├──────────────────────────┬──────────────────────────────────────┤
+│                          │                                        │
+│   Portfolio Website      │        PocketBase Backend           │
+│   (Next.js 16)          │        (Docker)                      │
+│                          │                                        │
+│   Vite/Tailwind          │   ┌─────────────────────────┐      │
+│   App Router             │   │   12 Collections          │      │
+│                          │   │   Users, Portfolio,       │      │
+│   Server Components      │   │   Services, Products,     │      │
+│   + Client Islands       │   │   Rentals, Blog, etc.     │      │
+│                          │   └─────────────────────────┘      │
+│   basePath support       │   ┌─────────────────────────┐      │
+│   for subdirectory       │   │   SQLite + File Storage   │      │
+│   deployments            │   │   Admin Dashboard         │      │
+│                          │   │   /_/                     │      │
+│   PocketBase JS SDK      │   └─────────────────────────┘      │
+│   for API calls          │   ┌─────────────────────────┐      │
+│                          │   │   Nginx SSL/Termination   │      │
+│   basePath: '/orchies'   │   │   (optional, for SSL)     │      │
+│   for subdirectory mode  │   └─────────────────────────┘      │
+└──────────────────────────┴──────────────────────────────────────┘
+```
 ┌─────────────────────────────────────────────────────────┐
 │                    Nginx Proxy Manager                    │
 ├──────────────────────┬──────────────────────────────────┤

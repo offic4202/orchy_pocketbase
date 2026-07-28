@@ -178,6 +178,37 @@ bun run pb:init    # Initialize PocketBase collections
 
 ### Deployment
 
-- Docker Compose for single-command deployment
-- Nginx Proxy Manager compatible
-- Persistent Docker volumes for PocketBase data
+#### Deployment Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `deploy.sh` | Full server installation (clones repo, configures env, sets up Nginx, starts services, initializes PocketBase) |
+| `uninstall.sh` | Removes all containers, volumes, images, and project data |
+
+#### Usage
+
+```bash
+# Subdomain deployment (orchies.click)
+./deploy.sh orchies.click subdomain / https://github.com/user/repo.git
+
+# Subdirectory deployment (orchies.click/orchies)
+./deploy.sh orchies.click subdirectory /orchies https://github.com/user/repo.git
+```
+
+#### Production Stack
+
+- **docker-compose.prod.yml** — Production deployment with Nginx reverse proxy
+- **nginx/conf.d/orchies.click.conf** — Nginx config supporting subdomain and subdirectory modes
+- **next.config.ts** — Supports `basePath` for subdirectory deployments via `BASE_PATH` env var
+
+#### Nginx Routing
+
+| Path | Target | Purpose |
+|------|--------|---------|
+| `/` or `/{basePath}` | Frontend (Next.js) | Main website |
+| `/pb/` or `/{basePath}/pb/` | PocketBase admin | Admin dashboard |
+| `/api/` or `/{basePath}/api/` | Next.js API routes | Form submissions |
+
+#### Nginx Proxy Manager
+
+The setup is compatible with Nginx Proxy Manager for SSL termination and advanced proxy management.

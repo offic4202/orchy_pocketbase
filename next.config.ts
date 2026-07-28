@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
+const basePath = process.env.BASE_PATH || "";
+
 const nextConfig: NextConfig = {
+  basePath,
   images: {
     remotePatterns: [
       {
@@ -17,7 +20,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'orchies.click',
+        hostname: '__DOMAIN__',
         pathname: '/api/files/**',
       },
     ],
