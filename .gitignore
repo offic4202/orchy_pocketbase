@@ -20,6 +20,9 @@
 # production
 /build
 
+# PocketBase
+/pb_data
+
 # misc
 .DS_Store
 *.pem

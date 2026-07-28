@@ -1,87 +1,83 @@
-# Active Context: Next.js Starter Template
+# Active Context: Orchies Visual - PocketBase Portfolio
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**Project Status**: ✅ Production-ready frontend + PocketBase backend
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+A complete remake of orchies.click as a headless CMS portfolio site for a videographer. Built with Next.js 16 frontend consuming PocketBase API, Docker Compose for deployment.
 
 ## Recently Completed
 
-- [x] Base Next.js 16 setup with App Router
-- [x] TypeScript configuration with strict mode
-- [x] Tailwind CSS 4 integration
-- [x] ESLint configuration
-- [x] Memory bank documentation
-- [x] Recipe system for common features
+- [x] Next.js 16 + TypeScript + Tailwind CSS 4 frontend
+- [x] PocketBase backend schema with 12 collections
+- [x] Docker Compose setup for PocketBase + Next.js
+- [x] PocketBase initialization script with sample data
+- [x] Homepage with hero, portfolio, services, products, testimonials, about, contact
+- [x] Dynamic pages: /portfolio, /services, /products, /rentals, /blog, /gallery, /contact, /about
+- [x] Contact form API route
+- [x] Rental booking API route
+- [x] Fixed Tailwind v4 theme configuration
+- [x] Fixed ESLint flat config with ignores
+- [x] TypeScript typecheck and build pass
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
-| `.kilocode/` | AI context & recipes | ✅ Ready |
+| `docker-compose.yml` | PocketBase + Frontend deployment | ✅ Ready |
+| `pb/init.mjs` | PocketBase schema + sample data init | ✅ Ready |
+| `src/app/page.tsx` | Homepage with all sections | ✅ Ready |
+| `src/app/layout.tsx` | Root layout with PocketBase settings | ✅ Ready |
+| `src/app/globals.css` | Tailwind v4 + custom theme | ✅ Ready |
+| `src/app/api/contact/route.ts` | Contact form API | ✅ Ready |
+| `src/app/api/rentals/route.ts` | Rental booking API | ✅ Ready |
+| `src/components/` | Navbar, Footer, ContactForm | ✅ Ready |
+| `src/lib/pocketbase.ts` | PocketBase client + types | ✅ Ready |
+| `src/types/index.ts` | TypeScript type definitions | ✅ Ready |
 
-## Current Focus
+## PocketBase Collections
 
-The template is ready. Next steps depend on user requirements:
+1. **users** (built-in) - Admin/assistant auth
+2. **portfolio** - Featured work entries
+3. **services** - Service offerings
+4. **categories** - Product categories
+5. **products** - Equipment for sale/rent
+6. **rental_bookings** - Customer rental requests
+7. **testimonials** - Client reviews
+8. **gallery** - Image gallery
+9. **blog** - Blog posts
+10. **contact_messages** - Contact form submissions
+11. **homepage_settings** - Hero, headline, social links
+12. **site_settings** - Logo, SEO, business info
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+## Tech Stack
 
-## Quick Start Guide
+- **Frontend**: Next.js 16, React 19, TypeScript 5.9, Tailwind CSS 4
+- **Backend**: PocketBase (Docker)
+- **Deployment**: Docker Compose, Nginx Proxy Manager compatible
+- **Package Manager**: Bun
 
-### To add a new page:
+## Quick Start
 
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
+```bash
+# Start PocketBase
+docker compose up -d pocketbase
+
+# Initialize PocketBase collections and sample data
+bun run pb:init
+
+# Start frontend dev server
+bun dev
+
+# Access admin panel
+# http://localhost:8090/_/
+# Email: admin@orchies.click
+# Password: admin123
 ```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
-```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-07-28 | Complete remake of orchies.click with PocketBase headless CMS architecture, Next.js 16 frontend, Docker Compose deployment, 12 PocketBase collections, 8 pages, contact/rental forms |
